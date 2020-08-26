@@ -27,7 +27,6 @@ import sys
 
 from async_terraingen import async_terraingen
 from cave_terraingen import cave_terraingen
-from lighting import lighting
 
 from multiprocessing import Manager,Pool,freeze_support,cpu_count
 import bz2
