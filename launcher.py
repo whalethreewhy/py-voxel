@@ -6,6 +6,7 @@ import os
 from multiprocessing import freeze_support
 import shutil
 import traceback
+import time
 
 def showmain():
     save_text.place(x=0,y=0)
@@ -283,7 +284,7 @@ if __name__ == "__main__":
             root.update_idletasks()
             root.update()
 
-                #os.mkdir('world_saves\\'+save_menu.get())
+            time.sleep(0.007)   
 
     except:
         pass
