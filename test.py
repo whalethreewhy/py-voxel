@@ -1471,7 +1471,7 @@ def main():
 		if True:
 			im = pil.open("sphaxtextures.png")
 			im = im.tobytes("raw", "RGBA", 0, -1)
-			am = pil.open('texture.png')
+			am = pil.open('gerudoku.png')
 			am=am.tobytes("raw", "RGBA", 0, -1)
 			bm = pil.open("cursed.png")
 			bm=bm.tobytes("raw", "RGBA", 0, -1)
@@ -1485,9 +1485,9 @@ def main():
 		fileload = bz2.BZ2File(resource_path('textures.pbz2'), 'rb')
 		fileload = cPickle.load(fileload)
 		if highres:
-			alltextures = (loadimg(fileload[0],2048,2048),loadimg(fileload[1],256,256),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))   
+			alltextures = (loadimg(fileload[0],2048,2048),loadimg(fileload[1],128,128),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))   
 		else:
-			alltextures = (loadimg(fileload[1],256,256),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))
+			alltextures = (loadimg(fileload[1],128,128),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))
 		Texture = alltextures[0]
 
 		#set3d()
