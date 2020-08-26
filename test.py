@@ -43,22 +43,23 @@ import PIL.Image as pil
 Running = True
 
 class Player():
-	def __init__(self,x,y,z,pitch,yaw,blockselection,flytoggle,jumping,timesince,timesincejump):
+	def __init__(self):
 		self.inventory=numpy.ones((4,9),dtype='int16')*-1
 		self.inventory[3]=numpy.array([0,1,2,3,4,5,7,8,9],dtype='int16')
 		self.hotbarselect = 0
 		self.hotbarupdate = True
 		self.inv_visible=False
-		self.x=x
-		self.y=y
-		self.z=z
-		self.pitch=pitch
-		self.yaw=yaw
+		self.x=0
+		self.y=0
+		self.z=0
+		self.pitch=0
+		self.yaw=0
 		self.blockselection=self.inventory[3][self.hotbarselect]
-		self.flytoggle=flytoggle
-		self.jumping=jumping
-		self.timesince=timesince
-		self.timesincejump=timesincejump
+		self.flytoggle=False
+		self.jumping=False
+		self.timesince=0
+		self.timesincejump=-1
+	
 	def update_selection(self,newselect):
 		if self.hotbarselect != newselect-1:
 			self.hotbarupdate = True
@@ -82,7 +83,7 @@ if True:
 	worldattr = worldattr.readlines()
 	worldtype = int(worldattr[0])
 	seed = int(worldattr[1])
-	renderdist = 11
+	renderdist = 5
 	fog = False
 	start_fov = 70
 	fov = 70
@@ -243,9 +244,6 @@ if __name__ == 'test' or __name__ == "__main__":
 			return (False,0,0,0)
 	
 	random.seed(a=seed)
-	Texture = 0
-	shader = 0
-	lineshader = 0
 	projection = glm.perspective(numpy.deg2rad(fov),width/height,0.1,farclip)
 	projection = numpy.array(projection)
 	is_looking = False
@@ -291,6 +289,7 @@ if True:
 		[0,1],
 		[0,-1],	
 	])
+
 """Shader Code"""
 if __name__ == 'test' or __name__ == "__main__":
 	VERTEX_SHADER = """
@@ -533,7 +532,6 @@ def newlight(starting=False):
 			glBufferSubData(GL_ARRAY_BUFFER,0, (len(lightBufferData))*4, lightBufferData)
 		glBindBuffer(GL_ARRAY_BUFFER, 0)			
 	
-		
 def ree(fg):
 	global lightmaps
 	del lightmaps[fg]
@@ -587,11 +585,6 @@ def resource_path(relative_path):
         base_path = os.path.abspath(".")
 
     return os.path.join(base_path, relative_path)
-
-def key_from_val(val,my_dict):
-	for key,value in my_dict.items():
-		if val == value:
-			return key
 
 def newverts(temppoints,tempsurfaces,addlist):
 	lencubeslist = len(addlist)
@@ -652,10 +645,6 @@ def rebuild_buffer(which_chunk,used_buffers_index):
 	v = numpy.reshape(v,(int(len(v)/6),6))[newmask].ravel()
 
 	d = numpy.ones((len(v)),dtype='float32')
-	"""
-	d = lighting(activearray[activearray_indices[which_chunk]],which_chunk)[newmask].ravel()
-	d = numpy.repeat(d/7,6).astype('float32')
-	"""
 
 	glBindBuffer(GL_ARRAY_BUFFER, selectedbuffers[0])
 	glBufferData(GL_ARRAY_BUFFER, (maxblocks*108)*4, None, GL_DYNAMIC_DRAW)
@@ -678,7 +667,7 @@ def rebuild_buffer(which_chunk,used_buffers_index):
 
 def remove_block(removedcube,real,in_wk):
 	#0 is real remove, 1 is real place, 2 is fake remove, 3 is fake place
-	global cubes,world,activearray_indices,activearray,chunkbuffer,buffers_to_rebuild
+	global world,activearray_indices,activearray,chunkbuffer,buffers_to_rebuild
 	which_chunk = (int(removedcube[0]//8),int(removedcube[2]//8))
 	removedcube = [int(removedcube[0]),int(removedcube[1]),int(removedcube[2])]
 
@@ -702,7 +691,6 @@ def remove_block(removedcube,real,in_wk):
 				world[(int(e[0]//8),int(e[2]//8))][tuple(e)] = (world[(int(e[0]//8),int(e[2]//8))][tuple(e)][0],1)
 				place_block(showblock,False)
 
-		cubes = numpy.concatenate(activearray)
 	else:
 		saveQueue.put((2,removedcube,currentplayerdata))
 		wk = in_wk
@@ -724,7 +712,7 @@ def remove_block(removedcube,real,in_wk):
 
 def place_block(addedcube,real):
 	#0 is real remove, 1 is real place, 2 is fake remove, 3 is fake place
-	global cubes,world,activearray_indices,activearray,chunkbuffer,used_buffers,buffers_to_rebuild
+	global world,activearray_indices,activearray,chunkbuffer,used_buffers,buffers_to_rebuild
 	addedcube = [int(addedcube[0]),int(addedcube[1]),int(addedcube[2]),int(addedcube[3])]
 	which_chunk = (addedcube[0]//8,(addedcube[2]//8))
 
@@ -755,7 +743,6 @@ def place_block(addedcube,real):
 					activearray[activearray_indices[(int(e[0]//8),int(e[2]//8))]] = numpy.delete(activearray[activearray_indices[(int(e[0]//8),int(e[2]//8))]],wk,0)
 					remove_block(e,False,wk)
 				
-		cubes = numpy.concatenate(activearray)
 		if len(buffers_to_rebuild) > 0:
 			for h in buffers_to_rebuild:
 				rebuild_buffer(h[0],h[1])
@@ -790,12 +777,7 @@ def genbuffers(triangleverts,triangleindices):
 			used_buffers[n][4] = lenv
 			break
 	
-	#numpy.ones((lenv),dtype='float32')
-	"""
-	nump = numpy.reshape(nump,(int(lenv/36),36))
-	nump[:,:6] = [0,0,0,0,0,0]
-	nump = nump.flatten()
-	"""
+
 	if True:
 		currentvao = VAOs.pop()
 		used_VAOs[currentvao] = n
@@ -906,7 +888,6 @@ def drawmenu(display,tex,buttonattributes):
 
 def drawbuffers(model,view,used_buffers):
 	global currentnear,is_looking,VAOs
-	#print(player.x//8,player.z//8)
 	set3d()
 	
 	glUseProgram(shader)
@@ -926,23 +907,15 @@ def drawbuffers(model,view,used_buffers):
 		glUniformMatrix4fv(model_loc, 1, GL_FALSE, model)
 	
 		colormult = (suny+255)/(255*2)
-		[0.9843,0.6862,0.3843]
 		basecolor = [0.5, 0.69, 1.0]
 		ambientcolor = 1.0
-		"""
-		if colormult < 0.35:
-			basecolor[0] += (0.9843-0.5)*min(0.07/colormult,1)
-			basecolor[1] += (0.6862-0.69)*min(0.07/colormult,1)
-			basecolor[2] += (0.3843-1.0)*min(0.05/colormult,1)
-		"""
+
 		if colormult <= 0.25:
 			ambientcolor = colormult/0.25
 
 
-		
 		clearcolor = (ambientcolor*basecolor[0], ambientcolor*basecolor[1], ambientcolor*basecolor[2], 1)
 		glClearColor(clearcolor[0],clearcolor[1],clearcolor[2],clearcolor[3])
-		#glClearColor(0.5, 0.69, 1.0, 1)
 		glUniform3f(sun_loc, sunx,suny,0)
 		glUniform3f(pos_loc, player.x,player.y,player.z)
 		glUniform4f(fog_loc,clearcolor[0],clearcolor[1],clearcolor[2],clearcolor[3])
@@ -972,9 +945,8 @@ def drawbuffers(model,view,used_buffers):
 	
 def draw2d(menuvisible,display,menuTex,hotbarTex,buttonattributes):
 	set2d()
-	
 	drawhotbar(hotbarTex)
-	
+
 	if menuvisible:
 		drawmenu(display,menuTex,buttonattributes)
 	else:
@@ -987,6 +959,24 @@ def draw2d(menuvisible,display,menuTex,hotbarTex,buttonattributes):
 		glVertex2i(int(width/2),int(height/2)-reticleH)
 		glVertex2i(int(width/2),int(height/2)+reticleH)
 		glEnd()
+
+def hotbarSetup():
+	global hotbarVAO
+	hotbarVAO = glGenVertexArrays(1)
+	glBindVertexArray(hotbarVAO)
+	glBindBuffer(GL_ARRAY_BUFFER, highestworldbuffer+7)
+	glBufferData(GL_ARRAY_BUFFER, 4*4, None, GL_DYNAMIC_DRAW)
+	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, None)
+
+	glBindBuffer(GL_ARRAY_BUFFER, highestworldbuffer+8)
+	glBufferData(GL_ARRAY_BUFFER, 4*4, None, GL_DYNAMIC_DRAW)
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, None)
+
+
+	glBindBuffer(GL_ARRAY_BUFFER, highestworldbuffer+9)
+	glBufferData(GL_ARRAY_BUFFER, 4*4, None, GL_DYNAMIC_DRAW)
+	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, None)
+	glBindVertexArray(0)
 
 def drawhotbar(hotbarTex):
 	getupdate = player.hotbarupdate
@@ -1109,20 +1099,18 @@ def drawhotbar(hotbarTex):
 	orth_loc = glGetUniformLocation(uishader, "orth")
 	glUniformMatrix4fv(orth_loc, 1, GL_FALSE, numpy.array(glm.ortho(0.0, width, height, 0.0, -1000.0, 1000.0)))
 	
-	
-	glBindBuffer(GL_ARRAY_BUFFER,highestworldbuffer+7)
-	if getupdate: glBufferData(GL_ARRAY_BUFFER,len(icon_verts_colors)*4,icon_verts_colors,GL_STATIC_DRAW)
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, None)
+	if getupdate:
+		glBindBuffer(GL_ARRAY_BUFFER,highestworldbuffer+7)
+		glBufferData(GL_ARRAY_BUFFER,len(icon_verts_colors)*4,icon_verts_colors,GL_STATIC_DRAW)
 
-	glBindBuffer(GL_ARRAY_BUFFER,highestworldbuffer+8)
-	if getupdate: glBufferData(GL_ARRAY_BUFFER,len(icon_tex)*4,icon_tex,GL_STATIC_DRAW)
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 0, None)
+		glBindBuffer(GL_ARRAY_BUFFER,highestworldbuffer+8)
+		glBufferData(GL_ARRAY_BUFFER,len(icon_tex)*4,icon_tex,GL_STATIC_DRAW)
 
-	glBindBuffer(GL_ARRAY_BUFFER,highestworldbuffer+9)
-	if getupdate: glBufferData(GL_ARRAY_BUFFER,len(hotbaritems)*36*4,numpy.repeat(numpy.arange(0,len(hotbaritems),1,dtype='int32'),36),GL_STATIC_DRAW)
-	glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, None)
+		glBindBuffer(GL_ARRAY_BUFFER,highestworldbuffer+9)
+		glBufferData(GL_ARRAY_BUFFER,len(hotbaritems)*36*4,numpy.repeat(numpy.arange(0,len(hotbaritems),1,dtype='int32'),36),GL_STATIC_DRAW)
+		glBindBuffer(GL_ARRAY_BUFFER,0)
 
-
+	glBindVertexArray(hotbarVAO)
 	glEnableVertexAttribArray(0)
 	glEnableVertexAttribArray(1)
 	glEnableVertexAttribArray(2)
@@ -1130,7 +1118,7 @@ def drawhotbar(hotbarTex):
 
 	glDrawArrays( GL_TRIANGLES, 0,36*len(hotbaritems))
 
-	glBindBuffer(GL_ARRAY_BUFFER,0)
+	
 	glDisableVertexAttribArray(0)
 	glDisableVertexAttribArray(1)
 	glDisableVertexAttribArray(2)
@@ -1139,8 +1127,8 @@ def drawhotbar(hotbarTex):
 
 def drawbounding(lookingblock,model,view):
 	glPolygonMode( GL_FRONT_AND_BACK, GL_LINE )
-	glLineWidth(2.0)
-	#glEnable(GL_LINE_SMOOTH)
+	glLineWidth(1.5)
+	glEnable(GL_LINE_SMOOTH)
 	verticies = boundingpoints+lookingblock
 	tempverts = verticies[quadsurfaces]
 
@@ -1172,7 +1160,7 @@ def drawbounding(lookingblock,model,view):
 	glUseProgram(0)
 	glPolygonMode( GL_FRONT_AND_BACK, GL_FILL )
 	glLineWidth(1.0)
-	#glDisable(GL_LINE_SMOOTH)
+	glDisable(GL_LINE_SMOOTH)
 
 def movement(x,y,z,pitch,yaw):
 
@@ -1312,7 +1300,7 @@ def loadworld(inQueue,outQueue):
 			time.sleep(0.001)
 
 def loadunload_chunks(starting=False):
-	global loadedchunks_range,prevloaded,activearray,activearray_indices,used_buffers,available_buffers,chunkbuffer,cubes,seed,world
+	global loadedchunks_range,prevloaded,activearray,activearray_indices,used_buffers,available_buffers,chunkbuffer,seed,world
 	global chunkstoload,chunkstounload,loading,VAOs,used_VAOs,loadOut,loadQueue,loading_fromfile,commitQueue,commitCache
 	global masks
 	global lightQ
@@ -1413,21 +1401,17 @@ def loadunload_chunks(starting=False):
 				newvertindices = newvertindices[hiddenmask]
 
 				newvertindices = numpy.ravel(newvertindices)
-				#newcubelighting = numpy.repeat(lighting(dictconvert,u)/7,6).astype('float32')
 				masks[u] = hiddenmask
 				
 				#temptime = time.time()
 				chunkbuffer[u] = genbuffers(newcubeverts,newvertindices)
+				"""
 				if u not in lightmaps and not starting:
 					lightQ.add(u)
-				#lightingQueue.put((u,dictconvert))
+				"""
 				#print(round((time.time()-temptime)*1000,8))
 				chunkstoload.remove(u)
-				
-	
-		if len(activearray) > 0:
-			cubes = numpy.concatenate(activearray)
-		
+						
 def e_dist(a, b):
 
 	"""Distance calculation for 1D, 2D and 3D points using einsum
@@ -1452,37 +1436,38 @@ def e_dist(a, b):
 
 def main():
 	global Running
-	global world,cubes,currentnear,is_looking,seed,Texture
+	global world,currentnear,is_looking,seed,Texture
 	global player
 	global fov,projection
 	global sunx,suny,reversepath
 	global buffers_to_rebuild
 	bufferindices(renderdist)
-	"""Setup"""
+	
+	"""SETUP"""
 	if True:
-		#x,y,z,pitch,yaw,blockselection,flytoggle,jumping,timesince,timesincejump
-		player = Player(0,0,0,0,0,0,-1,0,0,-1)
+		player = Player()
 		lastblockchange,lastpress,lastplace=0,0,0
 		mousemove = (0,0)
 		mousepos = (0,0)
-		justswitched =1
-		inwindow = 1
+		justswitched = True
+		inwindow = True
 		buffers_to_rebuild = set()
-		
+		world = dict()
+
+		"""WINDOW INIT"""
 		pygame.init()
 		display = (width,height)
-
-		world = dict()
 		pygame.display.set_caption("Blocks (Preparing...)")
 		icon = pygame.image.load(resource_path('cobblestone.png'))
 		pygame.display.set_icon(icon)
-
 		if fullscreen == 1:
 			pygame.display.set_mode(display, FULLSCREEN|DOUBLEBUF|OPENGL)
 		else:
 			pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 		
 		set3d()
+
+		"""LOAD TEXTURES"""
 		"""
 		if True:
 			im = pil.open("sphaxtextures.png")
@@ -1498,64 +1483,64 @@ def main():
 			with bz2.BZ2File('textures' + '.pbz2', 'w') as foo: 
 				cPickle.dump((im,am,bm,cm,gm), foo)
 		"""
-
 		fileload = bz2.BZ2File(resource_path('textures.pbz2'), 'rb')
 		fileload = cPickle.load(fileload)
-		
-
 		if highres:
 			alltextures = (loadimg(fileload[0],2048,2048),loadimg(fileload[1],256,256),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))   
 		else:
 			alltextures = (loadimg(fileload[1],256,256),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))
-
 		Texture = alltextures[0]
-	
-	global shader,lineshader,uishader
-	shader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(VERTEX_SHADER, GL_VERTEX_SHADER),OpenGL.GL.shaders.compileShader(FRAGMENT_SHADER, GL_FRAGMENT_SHADER),validate=False)
-	lineshader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(LINE_VERTEX_SHADER, GL_VERTEX_SHADER),OpenGL.GL.shaders.compileShader(LINE_FRAGMENT_SHADER, GL_FRAGMENT_SHADER))
-	uishader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(UI_VERTEX_SHADER, GL_VERTEX_SHADER),OpenGL.GL.shaders.compileShader(UI_FRAGMENT_SHADER, GL_FRAGMENT_SHADER),validate=False)
-	
-	menuvisible = False
-	buttonattributes = [2,2,[0,2]]
-	lastsave = 0
-	lastfov = 0
 
-	global prevloaded,activearray,activearray_indices,loadedchunks_range,chunkbuffer,chunkstoload,chunkstounload,loading,loading_fromfile,commitQueue,commitCache
-	global VAOs,used_VAOs
-	global masks
-	global lightmaps,lightQ
-	global is_Loading
-	is_Loading = False
-	loadedchunks_range = numpy.array([[n,i] for n in range(-(renderdist-1),renderdist) for i in range(-(renderdist-1),renderdist)],dtype='int32')
-	
-	
-	activearray = numpy.empty((0,0,4),dtype='int')
-	activearray_indices = dict()
-	chunkbuffer = dict()
-	
-	prevloaded = set()
-	chunkstoload = set()
-	chunkstounload = set()
+		"""OPENGL SHADER COMPILATION"""
+		global shader,lineshader,uishader
+		shader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(VERTEX_SHADER, GL_VERTEX_SHADER),OpenGL.GL.shaders.compileShader(FRAGMENT_SHADER, GL_FRAGMENT_SHADER),validate=False)
+		lineshader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(LINE_VERTEX_SHADER, GL_VERTEX_SHADER),OpenGL.GL.shaders.compileShader(LINE_FRAGMENT_SHADER, GL_FRAGMENT_SHADER))
+		uishader = OpenGL.GL.shaders.compileProgram(OpenGL.GL.shaders.compileShader(UI_VERTEX_SHADER, GL_VERTEX_SHADER),OpenGL.GL.shaders.compileShader(UI_FRAGMENT_SHADER, GL_FRAGMENT_SHADER),validate=False)
+		
+		menuvisible = False
+		buttonattributes = [2,2,[0,2]]
+		lastsave = 0
+		lastfov = 0
 
-	loading = set()
-	loading_fromfile = set()
 
-	commitQueue = deque()
-	commitCache = set()
+		"""CHUNK LOAD PREP"""
+		global prevloaded,activearray,activearray_indices,loadedchunks_range,chunkbuffer,chunkstoload,chunkstounload,loading,loading_fromfile,commitQueue,commitCache
+		global VAOs,used_VAOs
+		global masks
+		global lightmaps,lightQ
+		global is_Loading
+		is_Loading = False
+		loadedchunks_range = numpy.array([[n,i] for n in range(-(renderdist-1),renderdist) for i in range(-(renderdist-1),renderdist)],dtype='int32')
+		
+		
+		activearray = numpy.empty((0,0,4),dtype='int')
+		activearray_indices = dict()
+		chunkbuffer = dict()
+		
+		prevloaded = set()
+		chunkstoload = set()
+		chunkstounload = set()
 
-	masks = dict()
+		loading = set()
+		loading_fromfile = set()
 
-	lightmaps = dict()
-	lightQ = set()
+		commitQueue = deque()
+		commitCache = set()
 
-	VAOs = {glGenVertexArrays(1) for b in range(len(available_buffers))}
-	used_VAOs = dict()
+		masks = dict()
+
+		lightmaps = dict()
+		lightQ = set()
+
+		VAOs = {glGenVertexArrays(1) for b in range(len(available_buffers))}
+		used_VAOs = dict()
+		hotbarSetup()
 	
 	
 	try:
 		get_playerdata = decompress_nonnp('player_data')
-		#player,sunx,reversepath = get_playerdata
-		player,nsunx,nreversepath = get_playerdata
+		player,sunx,reversepath = get_playerdata
+		#player,nsunx,nreversepath = get_playerdata
 		del get_playerdata
 		player.hotbarupdate = True
 	except:
@@ -1563,6 +1548,7 @@ def main():
 			loadunload_chunks()
 		cubes = numpy.concatenate(activearray)
 		ystart= cubes[numpy.logical_and(cubes[:,0] == player.x,cubes[:,2] == player.z)]
+		del cubes
 		try:
 			player.y = numpy.max(ystart[:,1:2])+2
 		except: player.y = 60
@@ -1570,26 +1556,22 @@ def main():
 	pygame.display.set_caption("Blocks (Loading Chunks...)")
 	while len(activearray_indices) < ((renderdist*2)-1)**2:
 		loadunload_chunks()
-	#newlight(starting=True)
-	#ll()
-	#newlight()
+
 
 	pygame.display.set_caption("Blocks")
 	clock = pygame.time.Clock()
 
 	while Running:
-		#print(player.x//8,player.z//8)
 		"""CHUNK LOADING"""
-		#temptime= time.time()
 		is_Loading = False
-		#loadunload_chunks()
-		newlight()
-		#temptime = (round((time.time()-temptime)*1000,8))
+		loadunload_chunks()
+		#newlight()
+
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				Running = False
 			if time.time()-lastblockchange>0.15:
-				if inwindow == 1 and pygame.mouse.get_focused() and event.type == pygame.MOUSEBUTTONDOWN:
+				if inwindow and pygame.mouse.get_focused() and event.type == pygame.MOUSEBUTTONDOWN:
 					if event.button == 5:
 						if player.hotbarselect+1 > 8:
 							player.update_selection(1)
@@ -1601,10 +1583,11 @@ def main():
 						else:
 							player.update_selection(player.hotbarselect)
 
-		if inwindow == 1 and pygame.mouse.get_focused():
+		if inwindow and pygame.mouse.get_focused():
+			"""GET MOUSE MOVEMENT AND UPDATE PITCH/YAW"""
 			mousemove = pygame.mouse.get_rel()
-			if not justswitched >= 2:
-				justswitched += 1
+			if justswitched:
+				justswitched = False
 				mousemove = (0,0)
 				pygame.mouse.set_pos(mousepos)
 				
@@ -1623,8 +1606,9 @@ def main():
 			pygame.event.set_grab(True)
 			menuvisible = False
 		else:
-			if inwindow == 1:inwindow *= -1
-			justswitched = 1
+			"""SHOW MENU"""
+			if inwindow :inwindow = False
+			justswitched = True
 			mousepos = pygame.mouse.get_pos()
 			pygame.event.set_grab(False)
 			pygame.mouse.set_visible(True)
@@ -1639,27 +1623,26 @@ def main():
 			if pygame.mouse.get_focused():
 				mousepos = pygame.mouse.get_pos()
 				if widthrange[0]<=mousepos[0]<=widthrange[1]:
+					"""SAVE BUTTON CLICKED"""
 					if heightrange[0]<=mousepos[1]<=heightrange[1]:
 						buttonattributes[2][0] = 1
 						if pygame.mouse.get_pressed()[0] == 1 and time.time()-lastsave > 0.3:
 							for saving in activearray_indices:
 								compressed_pickle(str(saving),world[saving])
 							compressed_nonnp('player_data',(player,sunx,reversepath))
-
 							lastsave = time.time()
+					"""QUIT BUTTON CLICKED"""
 					if heightrange[0]+buttonspacing<=mousepos[1]<=heightrange[1]+buttonspacing:
 							buttonattributes[2][1] = 3
 							if pygame.mouse.get_pressed()[0] == 1:
 								Running = False
 				
-		
-		pygame.event.get()
-		#keyboard input
+		"""KEYBOARD INPUT"""
 		if pygame.key.get_pressed()[pygame.K_ESCAPE]:
 			if time.time()-lastpress > 0.15:
 				lastpress = time.time()
-				inwindow *= -1
-		if inwindow == 1 and pygame.mouse.get_focused():
+				inwindow = not inwindow
+		if inwindow and pygame.mouse.get_focused():
 			nearcubes = []
 			for i in adjacent_chunks + (int(player.x//8),int(player.z//8)):
 				try:nearcubes.append(activearray[activearray_indices[tuple(i)]])
@@ -1738,7 +1721,7 @@ def main():
 
 			if time.time()-lastblockchange>0.15:
 				if pygame.key.get_pressed()[K_TAB]:
-					player.flytoggle *= -1
+					player.flytoggle = not player.flytoggle
 					lastblockchange = time.time()
 				if pygame.key.get_pressed()[pygame.K_1]:
 					player.update_selection(1)
@@ -1782,15 +1765,15 @@ def main():
 						Texture = alltextures[0]
 			if pygame.key.get_pressed()[pygame.K_SPACE]:
 					
-				if player.flytoggle == 1:
+				if player.flytoggle:
 					player.y += 0.1
 					if collisionpadding(nearcubes[:,:3],player.x,player.y,player.z): player.y -= 0.1
 					
 				if collisionpadding(nearcubes[:,:3],player.x,(player.y-0.1),player.z):
-					if player.flytoggle != 1 and player.jumping != 1:
-						player.jumping = 1
+					if (not player.flytoggle) and (not player.jumping):
+						player.jumping = True
 		
-		
+		"""GET NEARBY BLOCKS FOR PHYSICS CHECKING"""
 		nearcubes = []
 		for i in adjacent_chunks + (int(player.x//8),int(player.z//8)):
 			try:nearcubes.append(activearray[activearray_indices[tuple(i)]])
@@ -1799,34 +1782,35 @@ def main():
 			nearcubes = numpy.concatenate(nearcubes)
 		except:
 			nearcubes = numpy.array([[0,256,0]])
-			
 		checknear = copy.copy(nearcubes[:,:3])
 		checknear = checknear[numpy.logical_and(checknear[:,0] > player.x-7,checknear[:,0] < player.x+7)]
 		checknear = checknear[numpy.logical_and(checknear[:,2] > player.z-7,checknear[:,2] < player.z+7)]
 		
-		if player.jumping==1:
-			if player.timesincejump < 30 and player.flytoggle == -1:
+		"""PHYSICS"""
+		if player.jumping:
+			if player.timesincejump < 30 and (not player.flytoggle):
 				jumpheight = 0.15+(-1/4*(0.0025)*(player.timesincejump**2))
+				player.timesincejump += 1
 				if jumpheight >0:
 					player.y += jumpheight
 
 					if collisionpadding(checknear,player.x,player.y,player.z):
 						player.y -= jumpheight
-						player.timesincejump = -2
-						player.jumping = -1
-
+						player.timesincejump = -1
+						player.jumping = False
+				
 			else:
-				player.timesincejump = -2
-				player.jumping = -1
-			player.timesincejump += 1
-	
-		if player.flytoggle == -1:
+				player.timesincejump = -1
+				player.jumping = False
+			
+		if not player.flytoggle:
 			player.y,player.timesince = gravity(player.timesince,checknear,player.x,player.y,player.z)       
-		else:
-			player.timesince = 0
-
+		else: player.timesince = 0
+			
+		"""CHECK BLOCK IN LINE OF SIGHT/BREAK-PLACE"""
 		temppos = numpy.array([player.x,player.y,player.z])
 		checknear = checknear[numpy.logical_and(checknear[:,1] > temppos[1]-7,checknear[:,1] < temppos[1]+7)]
+		
 		
 		is_looking = False
 		if len(checknear) > 0:
@@ -1842,7 +1826,7 @@ def main():
 				
 				if time.time()-lastplace>0.15:
 					mousepress = pygame.mouse.get_pressed()
-					print(cn)
+					#print(cn)
 					if mousepress != (0,0,0) and menuvisible == False:
 
 						lastplace = time.time()
@@ -1894,14 +1878,17 @@ def main():
 								remove_block(currentnear,real=True,in_wk=-1)
 								#light_update((currentnear[0]//8,currentnear[2]//8))
 								
-		"""Back to spawn"""		
+		"""TP BACK TO SPAWN IF OUT OF WORLD"""		
 		if player.y < 0:
 			for saving in activearray_indices.keys():
 				compressed_pickle(str(saving),world[saving])
 			player.x,player.z = 0,0
 			while (int(player.x//8),int(player.z//8)) not in activearray_indices.keys():
 				loadunload_chunks()
+
+			cubes = numpy.concatenate(activearray)
 			ystart= cubes[numpy.logical_and(cubes[:,0] == player.x,cubes[:,2] == player.z)]
+			del cubes
 			try:
 				player.y = numpy.max(ystart[:,1:2])+2
 			except:
@@ -1909,13 +1896,13 @@ def main():
 
 
 		
-		"Prevent Screen Shake with Gravity"
+		"""NULLIFY SCREEN SHAKE WHEN GRAVITY ENABLES"""
 		if player.timesince < 0.06:
 			model,view = movement(player.x,round(player.y,1),player.z,player.pitch,player.yaw)
 		else:
 			model,view = movement(player.x,player.y,player.z,player.pitch,player.yaw)
 		
-		"""Time Cycle"""
+		"""TIME CYCLE"""
 		if True:
 			if sunx >= 255:
 				reversepath = -1 
@@ -1924,11 +1911,10 @@ def main():
 			suny = (reversepath*-1)*math.sqrt(abs((255**2)-(sunx**2)))
 			#sunx = sunx + (reversepath*0.01)
 		
+		"""DRAW"""
 		drawbuffers(model,view,used_buffers)
-		
 		draw2d(menuvisible,display,alltextures[len(alltextures)-2],alltextures[len(alltextures)-1],buttonattributes)
 		
-
 		pygame.display.flip()
 		clock.tick(vsync)
 
@@ -1957,5 +1943,3 @@ def run():
 
 if  __name__ == "__main__":
 	run()
-
-"""2640 LINES OF CODE"""
