@@ -20,3 +20,4 @@ setup(
     include_dirs=[numpy.get_include()],   
 )
 
+#python compile.py build_ext --inplace
