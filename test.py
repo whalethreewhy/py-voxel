@@ -83,8 +83,8 @@ if True:
 	worldattr = worldattr.readlines()
 	worldtype = int(worldattr[0])
 	seed = int(worldattr[1])
-	renderdist = 5
-	fog = False
+	renderdist = 11
+	fog = True
 	start_fov = 70
 	fov = 70
 	vsync = 70	
@@ -1465,8 +1465,7 @@ def main():
 		else:
 			pygame.display.set_mode(display, DOUBLEBUF|OPENGL)
 		
-		set3d()
-
+	
 		"""LOAD TEXTURES"""
 		"""
 		if True:
@@ -1490,6 +1489,8 @@ def main():
 		else:
 			alltextures = (loadimg(fileload[1],256,256),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))
 		Texture = alltextures[0]
+
+		#set3d()
 
 		"""OPENGL SHADER COMPILATION"""
 		global shader,lineshader,uishader
