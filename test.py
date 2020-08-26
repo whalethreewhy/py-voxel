@@ -351,19 +351,16 @@ if __name__ == 'test' or __name__ == "__main__":
 		out vec3 ambientLightIntensity;
 		out vec3 sunLightIntensity;
 
-		void main()
-		{   
-			if (normpointer == 4){
-				isBottom = 0f;
+		void main() {
+			if (normpointer == 4) {
+				isBottom = 0.0f;
 			}
 			else if (int(sidepointer) >= 216 && int(sidepointer) < 252 ){
-				isBottom = 0f;
+				isBottom = 0.0f;
 			}
 			else{
 				isBottom = 1.0f;
 			}
-
-
 			fragPosition = (model*vec4(vertNormal, 0.0f)).xyz;
 			gl_Position = projection * view * model * vec4(position, 1.0f);
 
@@ -371,10 +368,10 @@ if __name__ == 'test' or __name__ == "__main__":
 			visibility = exp(-pow((dist*density),gradient));
 			visibility = clamp(visibility,0.0,1.0);
 			//visibility = 1.0f;
-
 			
-			ambientLightIntensity = max(max(contrast,0.7f)*vec3(0.7f, 0.7f, 0.7f),0.2f);
-			sunLightIntensity = 1f-ambientLightIntensity.r*vec3(1f, 1f, 1f);
+			
+			ambientLightIntensity = max(vec3(0.7f, 0.7f, 0.7f)*max(contrast,0.7f),0.2f);
+			sunLightIntensity = 1.0f-ambientLightIntensity.r*vec3(1.0f, 1.0f, 1.0f);
 			newTexture = textureCoords;
 			vertColor = color;
 		}
@@ -476,7 +473,6 @@ if __name__ == 'test' or __name__ == "__main__":
 	"""
 	if not fog:
 		VERTEX_SHADER = VERTEX_SHADER.replace("//visibility = 1.0f;", "visibility = 1.0f;")
-
 				
 def newlight(starting=False):
 	global lightmaps,lightQ
@@ -1471,7 +1467,7 @@ def main():
 		if True:
 			im = pil.open("sphaxtextures.png")
 			im = im.tobytes("raw", "RGBA", 0, -1)
-			am = pil.open('texture.png')
+			am = pil.open('gerudoku.png')
 			am=am.tobytes("raw", "RGBA", 0, -1)
 			bm = pil.open("cursed.png")
 			bm=bm.tobytes("raw", "RGBA", 0, -1)
@@ -1485,9 +1481,9 @@ def main():
 		fileload = bz2.BZ2File(resource_path('textures.pbz2'), 'rb')
 		fileload = cPickle.load(fileload)
 		if highres:
-			alltextures = (loadimg(fileload[0],2048,2048),loadimg(fileload[1],256,256),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))   
+			alltextures = (loadimg(fileload[0],2048,2048),loadimg(fileload[1],128,128),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))   
 		else:
-			alltextures = (loadimg(fileload[1],256,256),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))
+			alltextures = (loadimg(fileload[1],128,128),loadimg(fileload[2],768,768),loadimg(fileload[3],200,160),loadimg(fileload[4],256,256))
 		Texture = alltextures[0]
 
 		#set3d()
