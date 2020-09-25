@@ -18,7 +18,7 @@ if __name__ == 'test' or __name__ == "__main__":
 	from unload_chunk import unload_chunk,get_key
 	from dict_to_numpy import dict_to_numpy
 	import random
-	import newlighting
+	#import newlighting
 
 
 import numpy
@@ -48,7 +48,6 @@ class Player():
 		self.inventory[3]=numpy.array([0,1,2,3,4,5,7,8,9],dtype='int16')
 		self.hotbarselect = 0
 		self.hotbarupdate = True
-		self.inv_visible=False
 		self.x=0
 		self.y=0
 		self.z=0
@@ -145,6 +144,7 @@ if __name__ == 'test' or __name__ == "__main__":
 	))
 
 	#sides,bottom,top
+	"""
 	texcoordslist = [
 		#Grass
 		[[0.0,0.25,0.0,0.0,0.25,0.0,0.0,0.25,0.25,0.0,0.25,0.25],
@@ -180,7 +180,7 @@ if __name__ == 'test' or __name__ == "__main__":
 		#Leaves
 		[0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25],
 	]
-
+	"""
 	fulltexcoords = numpy.array([
 		#grass
 		[0.0, 0.25, 0.0, 0.0, 0.25, 0.0, 0.0, 0.25, 0.25, 0.0, 0.25, 0.25, 0.0, 0.25, 0.0, 0.0, 0.25, 0.0, 0.0, 0.25, 0.25, 0.0, 0.25, 0.25, 0.0, 0.25, 0.0, 0.0, 0.25, 0.0, 0.0, 0.25, 0.25, 0.0, 0.25, 0.25, 0.0, 0.25, 0.0, 0.0, 0.25, 0.0, 0.0, 0.25, 0.25, 0.0, 0.25, 0.25, 0.0, 0.5, 0.0, 0.25, 0.25, 0.25, 0.0, 0.5, 0.25, 0.25, 0.25, 0.5, 0.25, 0.25, 0.25, 0.0, 0.5, 0.0, 0.25, 0.25, 0.5, 0.0, 0.5, 0.25],
@@ -201,7 +201,9 @@ if __name__ == 'test' or __name__ == "__main__":
 		#Oak Log
 		[0.5,0.5, 0.5,0.25, 0.75,0.25, 0.5,0.5, 0.75,0.25, 0.75,0.5,0.5,0.5, 0.5,0.25, 0.75,0.25, 0.5,0.5, 0.75,0.25, 0.75,0.5,0.5,0.5, 0.5,0.25, 0.75,0.25, 0.5,0.5, 0.75,0.25, 0.75,0.5,0.5,0.5, 0.5,0.25, 0.75,0.25, 0.5,0.5, 0.75,0.25, 0.75,0.5,0.75,0.5, 0.75,0.25, 1.0,0.25, 0.75,0.5, 1.0,0.25, 1.0,0.5,0.75,0.5, 0.75,0.25, 1.0,0.25, 0.75,0.5, 1.0,0.25, 1.0,0.5],
 		#Leaves
-		[0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25]
+		[0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25,0.75,0.25, 0.75,0.0, 1.0,0.0, 0.75,0.25, 1.0,0.0, 1.0,0.25],
+		#Glass
+		[0.25,1.0,0.25,0.75,0.5,0.75,0.25,1.0,0.5,0.75,0.5,1.0,0.25,1.0,0.25,0.75,0.5,0.75,0.25,1.0,0.5,0.75,0.5,1.0,0.25,1.0,0.25,0.75,0.5,0.75,0.25,1.0,0.5,0.75,0.5,1.0,0.25,1.0,0.25,0.75,0.5,0.75,0.25,1.0,0.5,0.75,0.5,1.0,0.25,1.0,0.25,0.75,0.5,0.75,0.25,1.0,0.5,0.75,0.5,1.0,0.25,1.0,0.25,0.75,0.5,0.75,0.25,1.0,0.5,0.75,0.5,1.0]
 	],dtype='float32')
 
 	buttontexcoords = [
@@ -247,7 +249,7 @@ if __name__ == 'test' or __name__ == "__main__":
 	projection = glm.perspective(numpy.deg2rad(fov),width/height,0.1,farclip)
 	projection = numpy.array(projection)
 	is_looking = False
-	vertindices_select = numpy.reshape(numpy.array([range(0,360)],dtype='uint32'),(10,36))
+	vertindices_select = numpy.reshape(numpy.array([range(0,396)],dtype='uint32'),(11,36))
 
 #vec3(0.0, 0.0, 1.0),vec3(1.0, 0.0, 0.0),vec3(0.0, 0.0, -1.0),vec3(-1.0, 0.0, 0.0),vec3(0.0,-1.0, 0.0),vec3(0.0, 1.0, 0.0)
 """Shared Variables"""
@@ -260,14 +262,7 @@ if True:
 		[0,0,1],
 		[0,0,-1]	
 	])
-	"""
-	tree = numpy.array([
-		[0, 1, 0, 8, 1], [0, 2, 0, 8, 1], [0, 3, 0, 8, 1], [0, 4, 0, 8, 1], [0, 4, 1, 9, 1], [0, 3, 1, 9, 1], [1, 3, 1, 9, 1], [1, 4, 1, 9, 1], [-1, 3, 1, 9, 1], [-1, 4, 1, 9, 1], [2, 3, 1, 9, 1], [2, 4, 1, 9, 1], [-2, 3, 1, 9, 1], 
-		[-2, 4, 1, 9, 1], [1, 3, 2, 9, 1], [0, 3, 2, 9, 1], [-1, 3, 2, 9, 1], [-2, 3, 2, 9, 1], [1, 4, 2, 9, 1], [0, 4, 2, 9, 1], [-1, 4, 2, 9, 1], [-2, 4, 2, 9, 1], [2, 3, 2, 9, 1], [2, 4, 2, 9, 1], [1, 3, 0, 9, 1], 
-		[2, 3, 0, 9, 1], [1, 4, 0, 9, 1], [2, 4, 0, 9, 1], [0, 3, -1, 9, 1], [0, 4, -1, 9, 1], [1, 3, -1, 9, 1], [2, 3, -1, 9, 1], [2, 4, -1, 9, 1], [1, 4, -1, 9, 1], [-1, 3, 0, 9, 1], [-1, 3, -1, 9, 1], [-1, 4, 0, 9, 1], [-1, 4, -1, 9, 1], [-2, 3, 0, 9, 1], [-2, 3, -1, 9, 1], [-2, 4, 0, 9, 1], [-2, 4, -1, 9, 1], [-1, 5, 1, 9, 1], [-1, 5, 0, 9, 1], [-1, 5, -1, 9, 1], [0, 5, -1, 9, 1], [1, 5, -1, 9, 1], [0, 5, 1, 9, 1], [1, 5, 1, 9, 1], [1, 5, 0, 9, 1], [0, 5, 0, 8, 1], [1, 6, 0, 9, 1], [0, 6, 0, 9, 1], [-1, 6, 0, 9, 1], [0, 6, 1, 9, 1], [0, 6, -1, 9, 1], [2, 4, -2, 9, 1], [2, 3, -2, 9, 1], [1, 3, -2, 9, 1], [1, 4, -2, 9, 1], [0, 3, -2, 9, 1], [0, 4, -2, 9, 1], [-1, 3, -2, 9, 1], [-1, 4, -2, 9, 1], [-2, 3, -2, 9, 1], [-2, 4, -2, 9, 1]
-	],dtype='int32')
-	"""
-	
+
 	tree = numpy.array([
 		[0, 1, 0, 8, 1], [0, 2, 0, 8, 1], [0, 3, 0, 8, 0], [0, 4, 0, 8, 0], [0, 4, 1, 9, 0], [0, 3, 1, 9, 1], [1, 3, 1, 9, 1], [1, 4, 1, 9, 0], [-1, 3, 1, 9, 1], [-1, 4, 1, 9, 0], [2, 3, 1, 9, 1], [2, 4, 1, 9, 1], [-2, 3, 1, 9, 1], [-2, 4, 1, 9, 1], [1, 3, 2, 9, 1], [0, 3, 2, 9, 1], [-1, 3, 2, 9, 1], [-2, 3, 2, 9, 1], [1, 4, 2, 9, 1], [0, 4, 2, 9, 1], [-1, 4, 2, 9, 1], [-2, 4, 2, 9, 1], [2, 3, 2, 9, 1], [2, 4, 2, 9, 1], [1, 3, 0, 9, 1], [2, 3, 0, 9, 1], [1, 4, 0, 9, 0], [2, 4, 0, 9, 1], [0, 3, -1, 9, 1], [0, 4, -1, 9, 0], [1, 3, -1, 9, 1], [2, 3, -1, 9, 1], [2, 4, -1, 9, 1], [1, 4, -1, 9, 0], [-1, 3, 0, 9, 1], [-1, 3, -1, 9, 1], [-1, 4, 0, 9, 0], [-1, 4, -1, 9, 0], 
 		[-2, 3, 0, 9, 1], [-2, 3, -1, 9, 1], [-2, 4, 0, 9, 1], [-2, 4, -1, 9, 1], [-1, 5, 1, 9, 1], [-1, 5, 0, 9, 1], [-1, 5, -1, 9, 1], [0, 5, -1, 9, 1], [1, 5, -1, 9, 1], [0, 5, 1, 9, 1], [1, 5, 1, 9, 1], [1, 5, 0, 9, 1], [0, 5, 0, 8, 0], [1, 6, 0, 9, 1], [0, 6, 0, 9, 1], [-1, 6, 0, 9, 1], [0, 6, 1, 9, 1], [0, 6, -1, 9, 1], [2, 4, -2, 9, 1], [2, 3, -2, 9, 1], [1, 3, -2, 9, 1], [1, 4, -2, 9, 1], [0, 3, -2, 9, 1], [0, 4, -2, 9, 1], [-1, 3, -2, 9, 1], [-1, 4, -2, 9, 1], [-2, 3, -2, 9, 1], [-2, 4, -2, 9, 1]
@@ -296,9 +291,10 @@ if __name__ == 'test' or __name__ == "__main__":
 		#version 330 core
 		layout (location = 0) in vec3 position;
 		layout (location = 1) in uint sidepointer;
-		layout (location = 2) in float color;
+		//layout (location = 2) in float color;
 		
-		uniform vec2 texarray[360] = vec2[360](    
+		
+		uniform vec2 texarray[396] = vec2[396](    
 			//grass
 			vec2(0.0,0.25),vec2(0.0,0.0),vec2(0.25,0.0),vec2(0.0,0.25),vec2(0.25,0.0),vec2(0.25,0.25),vec2(0.0,0.25),vec2(0.0,0.0),vec2(0.25,0.0),vec2(0.0,0.25),vec2(0.25,0.0),vec2(0.25,0.25),vec2(0.0,0.25),vec2(0.0,0.0),vec2(0.25,0.0),vec2(0.0,0.25),vec2(0.25,0.0),vec2(0.25,0.25),vec2(0.0,0.25),vec2(0.0,0.0),vec2(0.25,0.0),vec2(0.0,0.25),vec2(0.25,0.0),vec2(0.25,0.25),vec2(0.0,0.5),vec2(0.0,0.25),vec2(0.25,0.25),vec2(0.0,0.5),vec2(0.25,0.25),vec2(0.25,0.5),vec2(0.25,0.25),vec2(0.25,0.0),vec2(0.5,0.0),vec2(0.25,0.25),vec2(0.5,0.0),vec2(0.5,0.25),
 			//cobblestone
@@ -311,14 +307,16 @@ if __name__ == 'test' or __name__ == "__main__":
 			vec2(0.25,0.75),vec2(0.25,0.5),vec2(0.5,0.5),vec2(0.25,0.75),vec2(0.5,0.5),vec2(0.5,0.75),vec2(0.25,0.75),vec2(0.25,0.5),vec2(0.5,0.5),vec2(0.25,0.75),vec2(0.5,0.5),vec2(0.5,0.75),vec2(0.25,0.75),vec2(0.25,0.5),vec2(0.5,0.5),vec2(0.25,0.75),vec2(0.5,0.5),vec2(0.5,0.75),vec2(0.25,0.75),vec2(0.25,0.5),vec2(0.5,0.5),vec2(0.25,0.75),vec2(0.5,0.5),vec2(0.5,0.75),vec2(0.25,0.75),vec2(0.25,0.5),vec2(0.5,0.5),vec2(0.25,0.75),vec2(0.5,0.5),vec2(0.5,0.75),vec2(0.25,0.75),vec2(0.25,0.5),vec2(0.5,0.5),vec2(0.25,0.75),vec2(0.5,0.5),vec2(0.5,0.75),
 			//diamond block
 			vec2(0.5,0.75),vec2(0.5,0.5),vec2(0.75,0.5),vec2(0.5,0.75),vec2(0.75,0.5),vec2(0.75,0.75),vec2(0.5,0.75),vec2(0.5,0.5),vec2(0.75,0.5),vec2(0.5,0.75),vec2(0.75,0.5),vec2(0.75,0.75),vec2(0.5,0.75),vec2(0.5,0.5),vec2(0.75,0.5),vec2(0.5,0.75),vec2(0.75,0.5),vec2(0.75,0.75),vec2(0.5,0.75),vec2(0.5,0.5),vec2(0.75,0.5),vec2(0.5,0.75),vec2(0.75,0.5),vec2(0.75,0.75),vec2(0.5,0.75),vec2(0.5,0.5),vec2(0.75,0.5),vec2(0.5,0.75),vec2(0.75,0.5),vec2(0.75,0.75),vec2(0.5,0.75),vec2(0.5,0.5),vec2(0.75,0.5),vec2(0.5,0.75),vec2(0.75,0.5),vec2(0.75,0.75),
-			//glass
+			//water
 			vec2(0.75,0.75),vec2(0.75,0.5),vec2(1.0,0.5),vec2(0.75,0.75),vec2(1.0,0.5),vec2(1.0,0.75),vec2(0.75,0.75),vec2(0.75,0.5),vec2(1.0,0.5),vec2(0.75,0.75),vec2(1.0,0.5),vec2(1.0,0.75),vec2(0.75,0.75),vec2(0.75,0.5),vec2(1.0,0.5),vec2(0.75,0.75),vec2(1.0,0.5),vec2(1.0,0.75),vec2(0.75,0.75),vec2(0.75,0.5),vec2(1.0,0.5),vec2(0.75,0.75),vec2(1.0,0.5),vec2(1.0,0.75),vec2(0.75,0.75),vec2(0.75,0.5),vec2(1.0,0.5),vec2(0.75,0.75),vec2(1.0,0.5),vec2(1.0,0.75),vec2(0.75,0.75),vec2(0.75,0.5),vec2(1.0,0.5),vec2(0.75,0.75),vec2(1.0,0.5),vec2(1.0,0.75),
 			//Snow
 			vec2(0.0,1.0),vec2(0.0,0.75),vec2(0.25,0.75),vec2(0.0,1.0),vec2(0.25,0.75),vec2(0.25,1.0),vec2(0.0,1.0),vec2(0.0,0.75),vec2(0.25,0.75),vec2(0.0,1.0),vec2(0.25,0.75),vec2(0.25,1.0),vec2(0.0,1.0),vec2(0.0,0.75),vec2(0.25,0.75),vec2(0.0,1.0),vec2(0.25,0.75),vec2(0.25,1.0),vec2(0.0,1.0),vec2(0.0,0.75),vec2(0.25,0.75),vec2(0.0,1.0),vec2(0.25,0.75),vec2(0.25,1.0),vec2(0.0,1.0),vec2(0.0,0.75),vec2(0.25,0.75),vec2(0.0,1.0),vec2(0.25,0.75),vec2(0.25,1.0),vec2(0.0,1.0),vec2(0.0,0.75),vec2(0.25,0.75),vec2(0.0,1.0),vec2(0.25,0.75),vec2(0.25,1.0),
 			//Oak Log
 			vec2(0.5,0.5), vec2(0.5,0.25), vec2(0.75,0.25), vec2(0.5,0.5), vec2(0.75,0.25), vec2(0.75,0.5),vec2(0.5,0.5), vec2(0.5,0.25), vec2(0.75,0.25), vec2(0.5,0.5), vec2(0.75,0.25), vec2(0.75,0.5),vec2(0.5,0.5), vec2(0.5,0.25), vec2(0.75,0.25), vec2(0.5,0.5), vec2(0.75,0.25), vec2(0.75,0.5),vec2(0.5,0.5), vec2(0.5,0.25), vec2(0.75,0.25), vec2(0.5,0.5), vec2(0.75,0.25), vec2(0.75,0.5),vec2(0.75,0.5), vec2(0.75,0.25), vec2(1.0,0.25), vec2(0.75,0.5), vec2(1.0,0.25), vec2(1.0,0.5),vec2(0.75,0.5), vec2(0.75,0.25), vec2(1.0,0.25), vec2(0.75,0.5), vec2(1.0,0.25), vec2(1.0,0.5),
 			//Leaves
-			vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25)
+			vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),vec2(0.75,0.25), vec2(0.75,0.0), vec2(1.0,0.0), vec2(0.75,0.25), vec2(1.0,0.0), vec2(1.0,0.25),
+			//Glass
+			vec2(0.25,1.0),vec2(0.25,0.75),vec2(0.5,0.75),vec2(0.25,1.0),vec2(0.5,0.75),vec2(0.5,1.0),vec2(0.25,1.0),vec2(0.25,0.75),vec2(0.5,0.75),vec2(0.25,1.0),vec2(0.5,0.75),vec2(0.5,1.0),vec2(0.25,1.0),vec2(0.25,0.75),vec2(0.5,0.75),vec2(0.25,1.0),vec2(0.5,0.75),vec2(0.5,1.0),vec2(0.25,1.0),vec2(0.25,0.75),vec2(0.5,0.75),vec2(0.25,1.0),vec2(0.5,0.75),vec2(0.5,1.0),vec2(0.25,1.0),vec2(0.25,0.75),vec2(0.5,0.75),vec2(0.25,1.0),vec2(0.5,0.75),vec2(0.5,1.0),vec2(0.25,1.0),vec2(0.25,0.75),vec2(0.5,0.75),vec2(0.25,1.0),vec2(0.5,0.75),vec2(0.5,1.0)
 		);
 		
 		uniform vec3 normarray[6] = vec3[6](
@@ -342,7 +340,7 @@ if __name__ == 'test' or __name__ == "__main__":
 		uniform float density = 0.02;
 		uniform float gradient = 2;
 
-		out float vertColor;
+		//out float vertColor;
 		out vec2 newTexture;
 		out vec3 fragPosition;
 		out float visibility;
@@ -373,13 +371,13 @@ if __name__ == 'test' or __name__ == "__main__":
 			ambientLightIntensity = max(vec3(0.7f, 0.7f, 0.7f)*max(contrast,0.7f),0.2f);
 			sunLightIntensity = 1.0f-ambientLightIntensity.r*vec3(1.0f, 1.0f, 1.0f);
 			newTexture = textureCoords;
-			vertColor = color;
+			//vertColor = color;
 		}
 	"""
 	FRAGMENT_SHADER = """
 		#version 330 core
 
-		in float vertColor;
+		//in float vertColor;
 		in vec2 newTexture;
 		in vec3 fragPosition;
 		in float visibility;
@@ -395,15 +393,18 @@ if __name__ == 'test' or __name__ == "__main__":
 		out vec4 outColor;
 		void main()
 		{   
-			
-			
-			vec3 sunLightDirection = vec3(normalize(sun - fragPosition));
 			vec4 texel = texture(samplerTexture, newTexture);
+			if(texel.a < 0.1){
+				discard;
+			}
+			vec3 sunLightDirection = vec3(normalize(sun - fragPosition));
+			
 
 			
 			vec3 lightIntensity =  ambientLightIntensity + isBottom*sunLightIntensity * max(dot(fragPosition, sunLightDirection), 0.0f);
 			
-			outColor = vec4((texel.rgb * max(vertColor*lightIntensity*lightMult,0.2f)), texel.a);
+			//outColor = vec4((texel.rgb * max(vertColor*lightIntensity*lightMult,0.2f)), texel.a);
+			outColor = vec4((texel.rgb * max(lightIntensity*lightMult,0.2f)), texel.a);
 			outColor = mix(fogColor,outColor,visibility);
 		}
 	"""
@@ -634,13 +635,13 @@ def rebuild_buffer(which_chunk,used_buffers_index):
 	global used_buffers,chunkbuffer,masks,lightmaps
 	selectedbuffers = chunkbuffer[which_chunk]
 	f,newmask = newverts(points,surfaces,activearray[activearray_indices[which_chunk]][:,:3])
-	masks[which_chunk] = newmask
+	#masks[which_chunk] = newmask
 	f = f[newmask].ravel()
 
 	v = numpy.ravel(vertindices_select[activearray[activearray_indices[which_chunk]][:,3]])
 	v = numpy.reshape(v,(int(len(v)/6),6))[newmask].ravel()
 
-	d = numpy.ones((len(v)),dtype='float32')
+	
 
 	glBindBuffer(GL_ARRAY_BUFFER, selectedbuffers[0])
 	glBufferData(GL_ARRAY_BUFFER, (maxblocks*108)*4, None, GL_DYNAMIC_DRAW)
@@ -648,13 +649,14 @@ def rebuild_buffer(which_chunk,used_buffers_index):
 
 	
 	glBindBuffer(GL_ARRAY_BUFFER, selectedbuffers[1])
-	glBufferData(GL_ARRAY_BUFFER, (maxblocks*36)*4, None, GL_DYNAMIC_DRAW)
-	glBufferSubData(GL_ARRAY_BUFFER,0, (len(v))*4, v)	
-
+	glBufferData(GL_ARRAY_BUFFER, (maxblocks*36)*2, None, GL_DYNAMIC_DRAW)
+	glBufferSubData(GL_ARRAY_BUFFER,0, (len(v))*2, v.astype('uint16'))	
+	"""
+	d = numpy.ones((len(v)),dtype='float32')
 	glBindBuffer(GL_ARRAY_BUFFER, selectedbuffers[2])
 	glBufferData(GL_ARRAY_BUFFER, (maxblocks*36)*4, None, GL_DYNAMIC_DRAW)
 	glBufferSubData(GL_ARRAY_BUFFER,0, (len(d))*4, d)
-
+	"""
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
 
 	used_buffers[used_buffers_index][4] = len(v)
@@ -764,6 +766,7 @@ def genbuffers(triangleverts,triangleindices):
 
 	lenf = len(f)
 	lenv = len(v)
+	#print(numpy.min(v),numpy.max(v))
 	#lend = len(d)
 
 	#1 cube is 108 verts ((x,y,z)x36) and texcoords are 72
@@ -782,18 +785,19 @@ def genbuffers(triangleverts,triangleindices):
 		glBufferData(GL_ARRAY_BUFFER, (maxblocks*108)*4, None, GL_DYNAMIC_DRAW)
 		glBufferSubData(GL_ARRAY_BUFFER,0, (lenf)*4, f)
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, None)
-
+	
 		
 		glBindBuffer(GL_ARRAY_BUFFER, used_buffers[n][1])
-		glBufferData(GL_ARRAY_BUFFER, (maxblocks*36)*4, None, GL_DYNAMIC_DRAW)
-		glBufferSubData(GL_ARRAY_BUFFER,0, (lenv)*4, v)
-		glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, None)
-
+		glBufferData(GL_ARRAY_BUFFER, (maxblocks*36)*2, None, GL_DYNAMIC_DRAW)
+		glBufferSubData(GL_ARRAY_BUFFER,0, (lenv)*2, v.astype('uint16'))
+		#glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 0, None)
+		glVertexAttribIPointer(1,1,GL_UNSIGNED_SHORT,0,None)
+		"""
 		glBindBuffer(GL_ARRAY_BUFFER, used_buffers[n][2])
 		glBufferData(GL_ARRAY_BUFFER, (maxblocks*36)*4, None, GL_DYNAMIC_DRAW)
 		glBufferSubData(GL_ARRAY_BUFFER,0, (lenv)*4, numpy.ones((lenv),dtype='float32'))
 		glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 0, None)
-		
+		"""
 		glBindVertexArray(0)
 	
 	return(used_buffers[n])
@@ -890,6 +894,7 @@ def drawbuffers(model,view,used_buffers):
 	"""SHADER SETUP"""
 
 	if True:
+		
 		projection_loc = glGetUniformLocation(shader, "projection")
 		view_loc = glGetUniformLocation(shader, "view")
 		model_loc = glGetUniformLocation(shader, "model")
@@ -917,20 +922,19 @@ def drawbuffers(model,view,used_buffers):
 		glUniform4f(fog_loc,clearcolor[0],clearcolor[1],clearcolor[2],clearcolor[3])
 		glUniform1f(contrast_loc,colormult)
 		glUniform1f(lightmult_loc,max(ambientcolor,0.35))
-
-	
+		
 	
 	for n in used_VAOs:
 		glBindVertexArray(n)
 		glEnableVertexAttribArray(0)
 		glEnableVertexAttribArray(1)
-		glEnableVertexAttribArray(2)
+		#glEnableVertexAttribArray(2)
 		glDrawArrays( GL_TRIANGLES, 0,used_buffers[used_VAOs[n]][4])
 	
 	glBindVertexArray(0)
 	glDisableVertexAttribArray(0)
 	glDisableVertexAttribArray(1)
-	glDisableVertexAttribArray(2)
+	#glDisableVertexAttribArray(2)
 	
 	glBindBuffer(GL_ARRAY_BUFFER, 0)
 	glUseProgram(0)
@@ -942,7 +946,7 @@ def drawbuffers(model,view,used_buffers):
 def draw2d(menuvisible,display,menuTex,hotbarTex,buttonattributes):
 	set2d()
 	drawhotbar(hotbarTex)
-
+	
 	if menuvisible:
 		drawmenu(display,menuTex,buttonattributes)
 	else:
@@ -1092,10 +1096,11 @@ def drawhotbar(hotbarTex):
 			glUniformMatrix4fv(icon_model_loc, 1, GL_FALSE, icon_model)
 
 	
-	orth_loc = glGetUniformLocation(uishader, "orth")
-	glUniformMatrix4fv(orth_loc, 1, GL_FALSE, numpy.array(glm.ortho(0.0, width, height, 0.0, -1000.0, 1000.0)))
+
 	
 	if getupdate:
+		orth_loc = glGetUniformLocation(uishader, "orth")
+		glUniformMatrix4fv(orth_loc, 1, GL_FALSE, numpy.array(glm.ortho(0.0, width, height, 0.0, -1000.0, 1000.0)))
 		glBindBuffer(GL_ARRAY_BUFFER,highestworldbuffer+7)
 		glBufferData(GL_ARRAY_BUFFER,len(icon_verts_colors)*4,icon_verts_colors,GL_STATIC_DRAW)
 
@@ -1264,7 +1269,7 @@ def decompress_nonnp(file):
 	return data
 
 def gravity(sincetime,notexarray,inx,iny,inz):
-	fall = (-1/5*(12)*(sincetime**2))
+	fall = (-1/5*(5)*(sincetime**2))
 	fall = max(fall,-2)
 	iny += fall
 	outfall = fallcollision(notexarray,inx,iny,inz)
@@ -1317,14 +1322,15 @@ def loadunload_chunks(starting=False):
 
 
 		"""Newly Generated (Process)"""
-		if not outQueue.empty():				
+		if not outQueue.empty():	
+						
 			retrieveworld = outQueue.get()
 			for bn in retrieveworld:
 				break
 			commitQueue.append(((int(bn[0]//8),int(bn[2]//8)),retrieveworld))
 			commitCache.add((int(bn[0]//8),int(bn[2]//8)))
 			loading.remove((int(bn[0]//8),int(bn[2]//8)))
-
+			
 	
 	"""Request for Chunks from Processes/Thread"""
 	if True:
@@ -1356,6 +1362,7 @@ def loadunload_chunks(starting=False):
 		world[pullfromcache[0]] = pullfromcache[1]
 		commitCache.remove(pullfromcache[0])
 	
+		#justCommited = pullfromcache[0]
 	loadedchunks = settuple.intersection(world.keys())
 	chunkstounload.update(prevloaded-loadedchunks)
 	chunkstoload.update(loadedchunks-prevloaded)
@@ -1363,23 +1370,29 @@ def loadunload_chunks(starting=False):
 	
 	
 	if len(chunkstounload) > 0 or len(chunkstoload) > 0:
-		
-		for o,u in zip_longest(chunkstounload.copy(),chunkstoload.copy()):
+		for o in chunkstounload.copy():
 			"""Unload Chunk"""
-			if o != None and o in world.keys():
+			if o in world:
+
+				"""Chunk commited to world dict before actually loaded so sometimes error if transition between chunks quickly"""
+
 				world,activearray,activearray_indices,chunkbuffer,used_buffers,available_buffers,VAOs,used_VAOs = unload_chunk(o,world,activearray,activearray_indices,chunkbuffer,used_buffers,available_buffers,VAOs,used_VAOs)
 				chunkstounload.remove(o)
-				del masks[o]
+				"""
+				#del masks[o]
 				try:del lightmaps[o]
 				except:pass
+				
 				try:lightQ.remove(n)
 				except:pass
+				"""
+		for u in chunkstoload.copy():
 			"""Load Chunk"""
 			if u != None and u in world.keys():
-			
+				
 				dictconvert = world[u]
 				dictconvert = dict_to_numpy(dictconvert.items())
-
+				
 				if len(activearray) > 0:
 					activearray = activearray + [dictconvert]
 					activearray_indices[u] = len(activearray)-1
@@ -1390,24 +1403,31 @@ def loadunload_chunks(starting=False):
 				newvertindices = numpy.ravel(vertindices_select[dictconvert[:,3]])
 				
 				newvertindices = numpy.reshape(newvertindices,(int(len(newvertindices)/6),6))
-				newcubeverts,hiddenmask = newverts(points,surfaces,dictconvert[:,:3])
 
+				#rt = time.time()
+				newcubeverts,hiddenmask = newverts(points,surfaces,dictconvert[:,:3])
+				#print(f"load {round(((time.time()-rt)*1000),7)}")	
 				
 				newcubeverts = newcubeverts[hiddenmask]
 				newvertindices = newvertindices[hiddenmask]
 
 				newvertindices = numpy.ravel(newvertindices)
+				"""
 				masks[u] = hiddenmask
+				"""
 				
-				#temptime = time.time()
+				
 				chunkbuffer[u] = genbuffers(newcubeverts,newvertindices)
+				
 				"""
 				if u not in lightmaps and not starting:
 					lightQ.add(u)
 				"""
 				#print(round((time.time()-temptime)*1000,8))
 				chunkstoload.remove(u)
-						
+				
+				#break
+			
 def e_dist(a, b):
 
 	"""Distance calculation for 1D, 2D and 3D points using einsum
@@ -1523,12 +1543,12 @@ def main():
 
 		commitQueue = deque()
 		commitCache = set()
-
+		"""
 		masks = dict()
 
 		lightmaps = dict()
 		lightQ = set()
-
+		"""
 		VAOs = {glGenVertexArrays(1) for b in range(len(available_buffers))}
 		used_VAOs = dict()
 		hotbarSetup()
@@ -1560,10 +1580,14 @@ def main():
 
 	while Running:
 		"""CHUNK LOADING"""
+		if pygame.key.get_pressed()[pygame.K_k]:
+			print(sys.getsizeof(cPickle.dumps(used_VAOs)))
 		is_Loading = False
+		
 		loadunload_chunks()
+		
 		#newlight()
-
+		
 		for event in pygame.event.get():
 			if event.type == pygame.QUIT:
 				Running = False
@@ -1864,7 +1888,7 @@ def main():
 								
 								if not collisionpadding(numpy.array([newblock]),player.x,player.y,player.z):
 									checkchunk = (newblock[0]//8,(newblock[2]//8))
-									if checkchunk not in world.keys() or tuple(newblock) not in world[checkchunk]:
+									if tuple(newblock) not in world[checkchunk] or checkchunk not in world.keys():
 										place_block([newblock[0],newblock[1],newblock[2],player.blockselection],real=True)
 										#light_update((newblock[0]//8,newblock[2]//8))
 
@@ -1893,8 +1917,8 @@ def main():
 
 
 		
-		"""NULLIFY SCREEN SHAKE WHEN GRAVITY ENABLES"""
-		if player.timesince < 0.06:
+		"""NULLIFY SCREEN SHAKE WHEN GRAVITY ENABLED"""
+		if player.timesince < 0.061:
 			model,view = movement(player.x,round(player.y,1),player.z,player.pitch,player.yaw)
 		else:
 			model,view = movement(player.x,player.y,player.z,player.pitch,player.yaw)
@@ -1906,14 +1930,17 @@ def main():
 			if sunx <= -255:
 				reversepath = 1
 			suny = (reversepath*-1)*math.sqrt(abs((255**2)-(sunx**2)))
-			#sunx = sunx + (reversepath*0.01)
+			sunx = sunx + (reversepath*0.01)
+		#print(f"logic {round(((time.time()-rt)*1000),4)}")
 		
 		"""DRAW"""
 		drawbuffers(model,view,used_buffers)
 		draw2d(menuvisible,display,alltextures[len(alltextures)-2],alltextures[len(alltextures)-1],buttonattributes)
 		
+		#print('\n')
 		pygame.display.flip()
-		clock.tick(vsync)
+		
+		#clock.tick(vsync)
 
 def run():
 	if __name__ == 'test' or __name__ == "__main__":
